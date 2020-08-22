@@ -14,7 +14,7 @@ class Login extends Component {
   }
   Ingresar=async()=>{
 
-    await fetch('https://d3abe8f4d765.ngrok.io/Odontologos-Unidos/Backend_Odontologos/backend_odontologos/public/api/forostore',{
+    await fetch('https://5682e2d9ebcd.ngrok.io/Odontologos-Unidos/Backend_Odontologos/backend_odontologos/public/api/forostore',{
      
       method:'POST',
       headers:{

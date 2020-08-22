@@ -1,5 +1,5 @@
 import React, { Component, useState} from 'react';
-import { Text, View, StyleSheet, TextInput, Button, Image, ScrollView, ImageBackground, Alert } from 'react-native';
+import { Text, View, StyleSheet, TextInput, Button, Image, ScrollView, ImageBackground, Alert, AsyncStorage } from 'react-native';
 //import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 //import { faCoffee } from '@fortawesome/free-solid-svg-icons';
 class Login extends Component {
@@ -8,12 +8,26 @@ class Login extends Component {
     super(props);
     this.state = {
       usuario:"",
-      password:""
+      password:"",
+      valor:false
     };
   }
+  logeado=true
+  async getLogeado() {
+    try { 
+  
+      logeado = await AsyncStorage.getItem ('valor'); 
+      
+    } catch (error) { 
+      // Error al recuperar los datos 
+      console.log (error.message); 
+    }
+      return JSON.parse(logeado)
+    }
+
   Logear=async()=>{
 //    Alert.alert("Hola "+this.state.usuario+"  "+this.state.password)
-    await fetch('https://d3abe8f4d765.ngrok.io/Odontologos-Unidos/Backend_Odontologos/backend_odontologos/public/api/loginodontologo',{
+    await fetch('https://40640e4a3ec9.ngrok.io/Odontologos-Unidos/Backend_Odontologos/backend_odontologos/public/api/loginodontologo',{
      
       method:'POST',
       headers:{
@@ -23,8 +37,17 @@ class Login extends Component {
       body: JSON.stringify({"email":this.state.usuario,"password":this.state.password})
     }).then(res=>res.json())
     .then(resData=>{
-      if(resData.codigo===202){
-        Alert.alert('Enviar a pantall');
+      if(resData.valor){
+        this.state.valor = true;
+        const saveUserId = async() => {
+          try {
+            await AsyncStorage.setItem('valor', this.state.valor);
+          } catch (error) {
+            // Error retrieving data
+            console.log(error.message);
+          }
+        };
+        Alert.alert('Enviar a pantalla'+this.getLogeado());
       }else{
         Alert.alert(resData.mensaje);
       }
@@ -33,9 +56,12 @@ class Login extends Component {
 
     
   }
- render() {
+  render() {
     let {usuario}=this.state
     let {password}= this.state
+    let {valor}= this.state
+    //const userId = '8ba790f3-5acd-4a08-bc6a-97a36c124f29';
+
  return (
    <View style={styles.container}>
      

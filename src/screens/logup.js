@@ -17,7 +17,7 @@ class Login extends Component {
   }
   Logup=async()=>{
 //    Alert.alert("Hola "+this.state.usuario+"  "+this.state.password)
-    await fetch('https://d3abe8f4d765.ngrok.io/Odontologos-Unidos/Backend_Odontologos/backend_odontologos/public/api/odontologostore',{
+    await fetch('https://40640e4a3ec9.ngrok.io/Odontologos-Unidos/Backend_Odontologos/backend_odontologos/public/api/odontologostore',{
      
       method:'POST',
       headers:{
