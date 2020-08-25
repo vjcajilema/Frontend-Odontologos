@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import * as React from 'react';
 import { AsyncStorage, Alert } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -13,13 +13,12 @@ import Perfil from './src/screens/perfil'
 import Buscar from './src/screens/buscar'
 const Tab = createBottomTabNavigator();
 
-
+const my_storage_url = "@url:key"
 export default function MyTabs() {
-  let logeado=true
-  
 
 
 
+  let logeado=true  
 /*  const getLogeado = async() => {
   try { 
 
@@ -31,6 +30,28 @@ export default function MyTabs() {
   }
     return logeado
   }*/
+  
+//  https://40640e4a3ec9.ngrok.io/Odontologos-Unidos/Backend_Odontologos/backend_odontologos/public/api/
+
+
+
+
+
+  definirUrl=async()=>{
+
+    try {
+      await AsyncStorage.setItem(my_storage_url, "https://40640e4a3ec9.ngrok.io/Odontologos-Unidos/Backend_Odontologos/backend_odontologos/public/api/");
+    } catch (error) {
+      // Error retrieving data
+      console.log(error.message);
+    }
+  }
+
+
+
+
+let url= "https://40640e4a3ec9.ngrok.io/Odontologos-Unidos/Backend_Odontologos/backend_odontologos/public/api/"
+
 
 
 

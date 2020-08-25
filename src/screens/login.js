@@ -1,5 +1,6 @@
 import React, { Component, useState} from 'react';
 import { Text, View, StyleSheet, TextInput, Button, Image, ScrollView, ImageBackground, Alert, AsyncStorage } from 'react-native';
+//import App from '.';
 //import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 //import { faCoffee } from '@fortawesome/free-solid-svg-icons';
 class Login extends Component {
@@ -9,9 +10,31 @@ class Login extends Component {
     this.state = {
       usuario:"",
       password:"",
-      valor:false
+      valor:false,
+      urlback:"https://e0b31d61b78c.ngrok.io/Odontologos-Unidos/Backend_Odontologos/backend_odontologos/public/"
     };
   }
+
+  async GetData () {
+    try { 
+//      url=(await AsyncStorage.getItem ('@url:key'));
+      Alert.alert("ASla"+ await AsyncStorage.getItem ('@url:key'));
+      this.setState({url}); 
+      Alert.alert("log "+ log)
+      
+    } catch (error) { 
+      // Error al recuperar los datos 
+      console.log (error.message); 
+    }
+      return log    
+
+  }
+
+  componentDidMount () {
+    this.GetData()
+  }
+
+
   logeado=true
   async getLogeado() {
     try { 
@@ -27,8 +50,8 @@ class Login extends Component {
 
   Logear=async()=>{
 //    Alert.alert("Hola "+this.state.usuario+"  "+this.state.password)
-    await fetch('https://40640e4a3ec9.ngrok.io/Odontologos-Unidos/Backend_Odontologos/backend_odontologos/public/api/loginodontologo',{
-     
+//    Alert.alert("Direccion API" + this.url)
+    await fetch(this.state.urlback+"api/loginodontologo",{
       method:'POST',
       headers:{
         'Accept':'application/json',
@@ -60,7 +83,8 @@ class Login extends Component {
     let {usuario}=this.state
     let {password}= this.state
     let {valor}= this.state
-    //const userId = '8ba790f3-5acd-4a08-bc6a-97a36c124f29';
+    let {urlback}=this.state
+        //const userId = '8ba790f3-5acd-4a08-bc6a-97a36c124f29';
 
  return (
    <View style={styles.container}>

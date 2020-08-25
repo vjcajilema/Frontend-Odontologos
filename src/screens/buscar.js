@@ -1,7 +1,7 @@
 import React, { Component, useState} from 'react';
 import { Text, View, StyleSheet, TextInput, Button, Image, ScrollView, FlatList, Alert } from 'react-native';
-
-import { CustomPicker } from 'react-native-custom-picker'
+import { CustomPicker } from 'react-native-custom-picker';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 class Buscar extends Component {
 
   constructor(props) {
@@ -12,14 +12,16 @@ class Buscar extends Component {
       especialidadesValues:[],
       selectedValue:'',
       odontologosesp:'',
+      urlback:"https://e0b31d61b78c.ngrok.io/Odontologos-Unidos/Backend_Odontologos/backend_odontologos/public/"
 
     };
   }
 
   GetData = () => {
-    fetch('https://40640e4a3ec9.ngrok.io/Odontologos-Unidos/Backend_Odontologos/backend_odontologos/public/api/especialidades')
-    .then(response => response.json())
-    .then(json => {
+    fetch(this.state.urlback+"api/especialidades")
+//      fetch('https://localhost/Odontologos-Unidos/Backend_Odontologos/backend_odontologos/public/api/especialidades')
+      .then(response => response.json())
+      .then(json => {
 //    console.log(json.valor.especialidades)
 
     
@@ -49,7 +51,7 @@ class Buscar extends Component {
       especialidadesValues:value
     });
     let odontologos=[]
-    fetch('https://40640e4a3ec9.ngrok.io/Odontologos-Unidos/Backend_Odontologos/backend_odontologos/public/api/odontologobyespecialidad/'+value)
+    fetch(this.state.urlback+'api/odontologobyespecialidad/'+value)
     .then(response => response.json())
     .then(json => {
 //      Alert.alert("asa"+json.valor)
@@ -63,6 +65,11 @@ class Buscar extends Component {
   })
   }
 
+  Llamar(){
+    Alert.alert("video llamada en curso")
+  }
+
+  
   componentDidMount () {
     this.GetData()
   }
@@ -73,6 +80,7 @@ class Buscar extends Component {
     let {odontologosesp}= this.state
     let {especialidadesValues}= this.state
     let {especialidadesOptions}= this.state
+    let {urlback} = this.state
     
       
 
@@ -116,15 +124,33 @@ class Buscar extends Component {
                   data={this.state.odontologosesp}
                   renderItem={({item}) =>(
                           <View style={styles.odontologos}>
-                            <Image style={{width: 120, height: 100, marginBottom: 10, marginRight:10}}
-                              source={{uri: 'https://40640e4a3ec9.ngrok.io/Odontologos-Unidos/Backend_Odontologos/backend_odontologos/public/'+item.path}}
-                            />
-                            <Text style={{fontWeight: "bold", fontSize: 20}}>
-                              {item.nombre + " "+ item.apellido}</Text>
-                            
-                              <View>
+                            <View style={styles.imageodonto}>
+                              <Image style={{width: 100, height: 80,    borderRadius: 20/*, resizeMode: "contain"*/}}
+                                source={{uri: this.state.urlback+item.path}}
+                              />
+                            </View>
+                            <View style={styles.infodontologo}>
+                              <Text style={{fontWeight: "bold", fontSize: 20}}>
+                                {item.nombre + " "+ item.apellido}</Text>
+                              
+                                <View>
 
-                              </View>  
+                                </View>  
+                                <View style={styles.btnborde}>
+                                  <Button title="+" color='#089A9A'  borderRadius='150/2' style={ {
+                                      fontSize:18,
+                                      width:30,
+                                      height:30,
+                                      backgroundColor:'#089A9A',
+                                      borderRadius:50,
+                                  }} onPress={this.Llamar}
+                                  >
+                                    {/*<MaterialCommunityIcons name="login" color={color} size={size} />*/}
+                                  </Button>
+                                </View>
+                              
+                            </View>
+
                           </View>
                       )
                   }
@@ -206,6 +232,19 @@ const styles=StyleSheet.create({
     marginRight: 4 
 
   },
+
+  infodontologo:{
+    
+    flexDirection:'column',
+    
+  },
+  imageodonto:{
+    width: 100, height: 80,
+
+//    resizeMode: "cover",
+     marginBottom: 10, marginRight:10
+
+  },
   credenciales:{
     //flex:0.7
     alignSelf:'stretch',
@@ -237,19 +276,8 @@ const styles=StyleSheet.create({
  //   marginRight:70,
   //  marginLeft:70,
 
-  },
-  enlaces:{
-    
-    alignSelf:'stretch',
-    marginLeft:30,
-    marginRight:30,
-    marginTop:40,
-    marginBottom:30,
-    flexDirection:'row',
-    justifyContent:'space-between',
-    
-    
   }
+
 
 })
 
