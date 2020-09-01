@@ -2,60 +2,77 @@ import React, { Component, useState} from 'react';
 import { Text, View, StyleSheet, TextInput, Button, Image, ScrollView, FlatList, Alert } from 'react-native';
 import { CustomPicker } from 'react-native-custom-picker';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import Geolocation from '@react-native-community/geolocation';
+Geolocation.getCurrentPosition(info => console.log(info));
+
 
 class Clinica extends Component {
 
   constructor(props) {
     super(props);
     this.state = {
-      isLoading: true,
-      especialidadesOptions:[],
-      especialidadesValues:[],
+      nombre:'',
+      descripcion:'',
+      latitud:'',
+      longitud:'',
+      provinciasOptions:[],
+      provinciasValues:[],
+      ciudadesOptions:[],
+      ciudadesValues:[],
       selectedValue:'',
       odontologosesp:'',
-      urlback:"https://e0b31d61b78c.ngrok.io/Odontologos-Unidos/Backend_Odontologos/backend_odontologos/public/"
+      urlback:"https://154ae9037bc6.ngrok.io/Odontologos-Unidos/Backend_Odontologos/backend_odontologos/public/"
 
     };
   }
 
   GetData = () => {
-    fetch(this.state.urlback+"api/especialidades")
-//      fetch('https://localhost/Odontologos-Unidos/Backend_Odontologos/backend_odontologos/public/api/especialidades')
+    fetch(this.state.urlback+"api/provincias")
       .then(response => response.json())
       .then(json => {
-//    console.log(json.valor.especialidades)
-
     
     this.setState({
       isLoading: false,
-      especialidadesOptions:json.valor.especialidades/*.map((items)=>(
-        label=items.nombre
-      )),
-    */
+      provinciasOptions:json.valor.provincias
     });
 
-/*    this.setState({
-      especialidadesValues:json.valor.especialidades.map((items)=>(
-        values=items.id
-      )),    
-    });*/
-    console.log("especialidades... "+ this.state.especialidadesOptions)
+
+    console.log("provincias... "+ this.state.provinciasOptions)
  
   })
 
   }
 
-  ObtenerEspecialista (value) {
-    
+  GetCiudades (provincia) {
+
     this.setState({
       
-      especialidadesValues:value
+      provinciasValues:provincia
     });
+
+    fetch(this.state.urlback+"api/ciudades/"+provincia)
+        .then(response => response.json())
+        .then(json => {
+      
+      this.setState({
+        isLoading: false,
+        ciudadesOptions:json.valor.ciudades
+      });
+
+
+      console.log("ciudades... "+ this.state.ciudadesOptions)
+  
+    })
+
+  }
+
+  ObtenerEspecialista (value) {
+    
+
     let odontologos=[]
     fetch(this.state.urlback+'api/odontologobyespecialidad/'+value)
     .then(response => response.json())
     .then(json => {
-//      Alert.alert("asa"+json.valor)
       json.valor.map((items)=>(
         odontologos.push(items)
         
@@ -66,21 +83,22 @@ class Clinica extends Component {
   })
   }
 
-  Llamar(){
-    Alert.alert("video llamada en curso")
-  }
 
-  
   componentDidMount () {
     this.GetData()
   }
 
 
  render() {
-    let {titulo}= this.state
+    let {nombre}= this.state
+    let {descripcion}= this.state
+    let {latitud}= this.state
+    let {longitud}= this.state
     let {odontologosesp}= this.state
-    let {especialidadesValues}= this.state
-    let {especialidadesOptions}= this.state
+    let {provinciasValues}= this.state
+    let {provinciasOptions}= this.state
+    let {ciudadesValues}= this.state
+    let {ciudadesOptions}= this.state    
     let {urlback} = this.state
     
       
@@ -90,75 +108,69 @@ class Clinica extends Component {
      
       <View style={styles.fondo}>
         <View style={styles.header}>
-          <Text style={styles.saludo}>Odontólogos</Text>          
+          <Text style={styles.saludo}>Clínicas</Text>          
         </View>
 
-        <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'flex-start',alignSelf:'center', }}>
+        <View style={{ flex: 0.2, flexDirection: 'row', justifyContent: 'flex-start',alignSelf:'center', }}>
+          <Text style={{alignSelf:'baseline', marginTop:20,color:'gray'}}>Provincia: </Text>
           <CustomPicker
-            options={this.state.especialidadesOptions.map((items)=>(
+            options={this.state.provinciasOptions.map((items)=>(
               items.value,
               items.label
             ))
             
-            }
+            }            
+            placeholder="Seleccione una provincia"
+            //getLabel={item=>item.label}
+            onValueChange={value => {
+
+              this.GetCiudades(value)
+            }}
+          />        
+        </View>  
+        
+        <View style={{ flex: 0.2, flexDirection: 'row', justifyContent: 'flex-start',alignSelf:'center', }}>
+          <Text style={{alignSelf:'baseline', marginTop:20,color:'gray'}}>Ciudad: </Text>
+          <CustomPicker
+            options={this.state.ciudadesOptions.map((items)=>(
+              items.value,
+              items.label
+            ))
             
-            placeholder="Seleccione una especialidad"
+            }            
+            placeholder="Seleccione una ciudad"
             //getLabel={item=>item.label}
             onValueChange={value => {
 
               this.ObtenerEspecialista(value)
             }}
           />        
-        </View>  
-
-
+        </View>
 
         <ScrollView>
-
-          <View style={styles.titulo}>
-            <Text style={{fontWeight: "bold", fontSize: 15, textDecorationLine: 'underline'}}>
-                                Especialistas en {this.state.especialidadesValues}</Text>
-          
-          </View>
-          <View>
-            <FlatList
-                  data={this.state.odontologosesp}
-                  renderItem={({item}) =>(
-                          <View style={styles.odontologos}>
-                            <View style={styles.imageodonto}>
-                              <Image style={{width: 100, height: 80,    borderRadius: 20/*, resizeMode: "contain"*/}}
-                                source={{uri: this.state.urlback+item.path}}
-                              />
-                            </View>
-                            <View style={styles.infodontologo}>
-                              <Text style={{fontWeight: "bold", fontSize: 20}}>
-                                {item.nombre + " "+ item.apellido}</Text>
-                              
-                                <View>
-
-                                </View>  
-                                <View style={styles.btnborde}>
-                                  <Button title="+" color='#089A9A'  borderRadius='150/2' style={ {
-                                      fontSize:18,
-                                      width:30,
-                                      height:30,
-                                      backgroundColor:'#089A9A',
-                                      borderRadius:50,
-                                  }} onPress={this.Llamar}
-                                  >
-                                    {/*<MaterialCommunityIcons name="login" color={color} size={size} />*/}
-                                  </Button>
-                                </View>
-                              
-                            </View>
-
-                          </View>
-                      )
-                  }
-              /> 
-
-
+          <View style={styles.contenido}>
+            <Text style={{alignSelf:'baseline', marginTop:20,color:'gray'}}>Nombre: </Text>
+            <View style={styles.fondoborde}>
+              <TextInput style={styles.txtingreso} placeholder='Nombres' placeholderTextColor='white'
+                onChangeText={(nombre)=>this.setState({nombre})}
+              ></TextInput>
             </View>
+            <Text style={{alignSelf:'baseline', marginTop:20,color:'gray'}}>Descripción: </Text>
+
+            <View style={styles.fondoborde}>
+              <TextInput style={styles.txtingreso} placeholder='Descripción' placeholderTextColor='white'
+                onChangeText={(descripcion)=>this.setState({descripcion})}
+              ></TextInput>
+            </View>
+
+
+            <View style={styles.titulo}>
+              <Text style={{fontWeight: "bold", fontSize: 15, textDecorationLine: 'underline'}}>
+                                  Localzación</Text>
+            
+            </View>
+          </View>
+
 
         </ScrollView>
       </View>
@@ -214,6 +226,12 @@ const styles=StyleSheet.create({
 
 
   },
+  contenido:{
+    flex:1, 
+    marginLeft:10,
+    marginRight:10,
+
+  },
   titulo:{
     alignSelf:'flex-start',
     marginTop:15,
@@ -257,7 +275,8 @@ const styles=StyleSheet.create({
   fondoborde:{
 
 //    marginTop:10,
-
+    marginLeft:10,
+    marginRight:30,
     borderBottomColor:'gray',
     borderWidth: 2,
     

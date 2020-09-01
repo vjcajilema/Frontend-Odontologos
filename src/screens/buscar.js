@@ -12,7 +12,7 @@ class Buscar extends Component {
       especialidadesValues:[],
       selectedValue:'',
       odontologosesp:'',
-      urlback:"https://e0b31d61b78c.ngrok.io/Odontologos-Unidos/Backend_Odontologos/backend_odontologos/public/"
+      urlback:"https://154ae9037bc6.ngrok.io/Odontologos-Unidos/Backend_Odontologos/backend_odontologos/public/"
 
     };
   }
@@ -137,7 +137,7 @@ class Buscar extends Component {
 
                                 </View>  
                                 <View style={styles.btnborde}>
-                                  <Button title="+" color='#089A9A'  borderRadius='150/2' style={ {
+                                  <Button icon="camera"  color='#089A9A'  borderRadius='150/2' style={ {
                                       fontSize:18,
                                       width:30,
                                       height:30,
@@ -145,6 +145,7 @@ class Buscar extends Component {
                                       borderRadius:50,
                                   }} onPress={this.Llamar}
                                   >
+                                    <MaterialCommunityIcons name="book"  />
                                     {/*<MaterialCommunityIcons name="login" color={color} size={size} />*/}
                                   </Button>
                                 </View>
